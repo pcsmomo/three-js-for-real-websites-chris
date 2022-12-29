@@ -14,8 +14,29 @@ console.log(camera);
 console.log(renderer);
 
 renderer.setSize(window.innerWidth, window.innerHeight);
-// renderer.setClearColor(0x000000, 0.5);
+renderer.setPixelRatio(window.devicePixelRatio);
+// renderer.setClearColor(0xffff00, 0.5);
 
 document.body.appendChild(renderer.domElement);
 
-renderer.render(scene, camera);
+const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+console.log(boxGeometry);
+console.log(boxMaterial);
+
+const box = new THREE.Mesh(boxGeometry, boxMaterial);
+scene.add(box);
+
+camera.position.z = 5;
+
+function animate() {
+  requestAnimationFrame(animate);
+  box.rotation.x += 0.001;
+  box.rotation.y += 0.005;
+
+  renderer.render(scene, camera);
+}
+
+// if use this, no need to use `requestAnimationFrame(animate);` and `animate()`
+// renderer.setAnimationLoop(animate);
+animate();
