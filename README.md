@@ -11,6 +11,11 @@ Modern Three.js for Real Websites by Christopher Lis
 
 ```sh
 npm create vite@latest three-website-vite
+# Vanila
+# TypeScript
+
+npm install three
+npm install --save-dev @types/three
 ```
 
 </details>
