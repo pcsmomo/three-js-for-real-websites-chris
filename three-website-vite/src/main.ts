@@ -22,9 +22,25 @@ const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10);
 const planeMaterial = new THREE.MeshPhongMaterial({
   color: 0xff0000,
   side: THREE.DoubleSide,
+  flatShading: true,
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
+
+const { array } = plane.geometry.attributes.position;
+console.log(array);
+for (let i = 0, j = 1; i < array.length; i += 3) {
+  const x = array[i];
+  const y = array[i + 1];
+  const z = array[i + 2];
+  // console.log(j, [x, y, z]);
+
+  array[i + 2] = z + Math.random();
+
+  console.log(j, [x, y, array[i + 2]]);
+  j++;
+}
+// plane.geometry.attributes.position.array = array;
 
 // Light
 const light = new THREE.DirectionalLight(0xffffff, 1);
