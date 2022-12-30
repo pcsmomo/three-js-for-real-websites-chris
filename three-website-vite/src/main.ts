@@ -26,6 +26,11 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
+// Light
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(0, 0, 1);
+scene.add(light);
+
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
