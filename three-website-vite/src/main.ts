@@ -27,20 +27,19 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
-const { array } = plane.geometry.attributes.position;
-console.log(array);
+// Modify the position attribute of the geometry
+// const { array } = plane.geometry.attributes.position;  // ArrayLike<number> is ready-only in TypeScript ts(2542)
+const array = Float32Array.from(plane.geometry.attributes.position.array);
 for (let i = 0, j = 1; i < array.length; i += 3) {
   const x = array[i];
   const y = array[i + 1];
   const z = array[i + 2];
-  // console.log(j, [x, y, z]);
 
   array[i + 2] = z + Math.random();
-
-  console.log(j, [x, y, array[i + 2]]);
-  j++;
+  console.log(j++, [x, y, array[i + 2]]);
 }
-// plane.geometry.attributes.position.array = array;
+const positionAttribute = new THREE.BufferAttribute(array, 3, false);
+plane.geometry.setAttribute('position', positionAttribute);
 
 // Light
 const light = new THREE.DirectionalLight(0xffffff, 1);
