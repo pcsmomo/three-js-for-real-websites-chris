@@ -15,17 +15,11 @@ renderer.setPixelRatio(window.devicePixelRatio);
 
 document.body.appendChild(renderer.domElement);
 
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-const boxMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-
-const box = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(box);
-
 camera.position.z = 5;
 
 // Plane
 const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10);
-const planeMaterial = new THREE.MeshBasicMaterial({
+const planeMaterial = new THREE.MeshPhongMaterial({
   color: 0xff0000,
   side: THREE.DoubleSide,
 });
@@ -34,9 +28,7 @@ scene.add(plane);
 
 function animate() {
   requestAnimationFrame(animate);
-  box.rotation.x += 0.001;
-  box.rotation.y += 0.005;
-  plane.rotation.x += 0.01;
+  // plane.rotation.x += 0.01;
 
   renderer.render(scene, camera);
 }
