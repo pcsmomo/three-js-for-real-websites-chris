@@ -18,4 +18,10 @@ npm install three
 npm install --save-dev @types/three
 ```
 
+### 8. Real-Time Scene Editing with Dat.GUI
+
+```sh
+npm install dat.gui
+```
+
 </details>
