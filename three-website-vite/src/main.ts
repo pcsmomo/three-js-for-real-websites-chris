@@ -82,9 +82,10 @@ const planeGeometry = new THREE.PlaneGeometry(
   PLN_SEG_H
 );
 const planeMaterial = new THREE.MeshPhongMaterial({
-  color: 0xff0000,
+  // color: 0xff0000, // this default color will affect plan 'color' attribute (=vertex color?)
   side: THREE.DoubleSide,
   flatShading: true,
+  vertexColors: true,
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
@@ -95,6 +96,22 @@ scene.add(plane);
 plane.geometry.setAttribute(
   'position',
   getNewPosition(plane.geometry.attributes.position.array as Array<number>)
+);
+
+const colors = [];
+for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
+  colors.push(1, 0, 0); // RGB
+}
+// Colorful base colors
+// for (let i = 0; i < plane.geometry.attributes.position.count / 3; i++) {
+//   colors.push(0, 0, 1); // RGB -> blue
+//   colors.push(0, 1, 0); // green
+//   colors.push(1, 0, 0); // red
+// }
+
+plane.geometry.setAttribute(
+  'color',
+  new THREE.BufferAttribute(new Float32Array(colors), 3)
 );
 
 // Lights
@@ -108,10 +125,11 @@ scene.add(backLight);
 
 // normalized mouse coordinates
 const mouse = {
-  x: 0,
-  y: 0,
+  x: 10, // set the default value out of the range (-1 to 1)
+  y: 10,
 };
 
+type PlaneMesh = THREE.Mesh<THREE.PlaneGeometry, THREE.MeshPhongMaterial>;
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
@@ -121,7 +139,16 @@ function animate() {
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObject(plane);
   if (intersects.length > 0) {
-    console.log('intersecting');
+    // intersects[0].object.geometry.attributes.color   // ts(2339) warning
+    const obj = intersects[0].object as PlaneMesh;
+    const { color } = obj.geometry.attributes;
+    if (intersects[0].face) {
+      // XYZ = RGB
+      color.setXYZ(intersects[0].face.a, 0, 0, 1); // vertex 1
+      color.setXYZ(intersects[0].face.b, 0, 0, 1); // vertex 2
+      color.setXYZ(intersects[0].face.c, 0, 0, 1); // vertex 3
+      color.needsUpdate = true;
+    }
   }
 }
 
@@ -132,5 +159,4 @@ animate();
 addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / innerHeight) * 2 + 1;
-  console.log(mouse);
 });
