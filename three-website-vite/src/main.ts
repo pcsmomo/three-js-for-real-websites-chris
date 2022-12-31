@@ -105,6 +105,12 @@ const backLight = new THREE.DirectionalLight(0xffffff, 1);
 backLight.position.set(0, 0, -1);
 scene.add(backLight);
 
+// normalized mouse coordinates
+const mouse = {
+  x: 0,
+  y: 0,
+};
+
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
@@ -115,3 +121,9 @@ function animate() {
 // if use this, no need to use `requestAnimationFrame(animate);` and `animate()`
 // renderer.setAnimationLoop(animate);
 animate();
+
+addEventListener('mousemove', (event) => {
+  mouse.x = (event.clientX / innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+  console.log(mouse);
+});
