@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import dat from 'dat.gui';
 
 // Constants
@@ -67,6 +68,9 @@ renderer.setPixelRatio(window.devicePixelRatio);
 
 document.body.appendChild(renderer.domElement);
 
+// Orbit controls
+new OrbitControls(camera, renderer.domElement);
+
 camera.position.z = 5;
 
 // Plane
@@ -92,10 +96,14 @@ plane.geometry.setAttribute(
   getNewPosition(plane.geometry.attributes.position.array as Array<number>)
 );
 
-// Light
+// Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 0, 1);
 scene.add(light);
+
+const backLight = new THREE.DirectionalLight(0xffffff, 1);
+backLight.position.set(0, 0, -1);
+scene.add(backLight);
 
 function animate() {
   requestAnimationFrame(animate);
