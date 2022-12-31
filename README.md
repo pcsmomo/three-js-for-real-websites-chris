@@ -24,4 +24,8 @@ npm install --save-dev @types/three
 npm install dat.gui
 ```
 
+### 10. Geometry Hover Effects
+
+Three js Raycaster coordinates normalized positions from [-1, 1] to [1, -1] and the center is [0, 0]
+
 </details>

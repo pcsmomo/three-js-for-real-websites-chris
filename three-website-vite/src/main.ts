@@ -53,6 +53,7 @@ function generatePlane() {
   );
 }
 
+const raycaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -116,6 +117,12 @@ function animate() {
   // plane.rotation.x += 0.01;
 
   renderer.render(scene, camera);
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObject(plane);
+  if (intersects.length > 0) {
+    console.log('intersecting');
+  }
 }
 
 // if use this, no need to use `requestAnimationFrame(animate);` and `animate()`
