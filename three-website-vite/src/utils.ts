@@ -6,7 +6,7 @@ import { PlaneMesh, World } from './types';
 // Constants
 import { BASE_RGB } from './constants';
 
-function getNewPosition(arrayToCopy: Array<number>) {
+function getRandomizedPosition(arrayToCopy: Array<number>) {
   // Modify the position attribute of the geometry
   // const { array } = plane.geometry.attributes.position;  // ArrayLike<number> is ready-only in TypeScript ts(2542)
   // const array = Float32Array.from(plane.geometry.attributes.position.array); // it works
@@ -23,7 +23,7 @@ function getNewPosition(arrayToCopy: Array<number>) {
   return new THREE.BufferAttribute(array, 3, false);
 }
 
-function getNewColors(plane: PlaneMesh) {
+function getInitialColors(plane: PlaneMesh) {
   const colors = [];
   for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
     colors.push(...BASE_RGB); // RGB
@@ -40,13 +40,13 @@ function getNewColors(plane: PlaneMesh) {
 
 export function setPlaneAttributes(plane: PlaneMesh) {
   // position
-  const position = getNewPosition(
+  const position = getRandomizedPosition(
     plane.geometry.attributes.position.array as Array<number>
   );
   plane.geometry.setAttribute('position', position);
 
   // color
-  const colors = getNewColors(plane);
+  const colors = getInitialColors(plane);
   plane.geometry.setAttribute('color', colors);
 }
 
