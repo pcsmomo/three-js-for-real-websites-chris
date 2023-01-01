@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import { World } from './types';
 
 // Utils
-import { setPlaneAttributes, generatePlane, setPlaneColor } from './utils';
+import { generatePlane, setPlaneColor, getPlaneExtraInfo } from './utils';
 
 // Constants
 import { BASE_RGB, HOVER_RGB } from './constants';
@@ -28,16 +28,16 @@ const world: World = {
 
 gui
   .add(world.plane, 'width', 1, 500)
-  .onChange(() => generatePlane(plane, world));
+  .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui
   .add(world.plane, 'height', 1, 500)
-  .onChange(() => generatePlane(plane, world));
+  .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui
   .add(world.plane, 'widthSegments', 1, 100)
-  .onChange(() => generatePlane(plane, world));
+  .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui
   .add(world.plane, 'heightSegments', 1, 100)
-  .onChange(() => generatePlane(plane, world));
+  .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui.add(world.plane, 'r', 0, 1);
 gui.add(world.plane, 'g', 0, 1);
 gui.add(world.plane, 'b', 0, 1);
@@ -79,15 +79,10 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
-// setPlaneAttributes(plane);
-generatePlane(plane, world);
 
 // set extrs variables for position effect
-const planePosArr = plane.geometry.attributes.position.array;
-const planeOriginalPisition = planePosArr;
-const randomValues = new Array(planePosArr.length)
-  .fill(0)
-  .map(() => Math.random() - 0.5);
+const planeExtraInfo = getPlaneExtraInfo(plane);
+generatePlane(plane, world, planeExtraInfo);
 
 // Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -118,11 +113,12 @@ function animate() {
   for (let i = 0; i < array.length; i += 3) {
     // x
     array[i] =
-      planeOriginalPisition[i] + Math.cos(frame + randomValues[i]) * 0.3;
+      planeExtraInfo.originalPosition[i] +
+      Math.cos(frame + planeExtraInfo.randomValues[i]) * 0.3;
     // y
     array[i + 1] =
-      planeOriginalPisition[i + 1] +
-      Math.sin(frame + randomValues[i + 1]) * 0.3;
+      planeExtraInfo.originalPosition[i + 1] +
+      Math.sin(frame + planeExtraInfo.randomValues[i + 1]) * 0.3;
 
     // if (i === 0) {
     //   console.log(array[i], array[i + 1]);

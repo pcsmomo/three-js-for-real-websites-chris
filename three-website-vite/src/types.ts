@@ -14,3 +14,8 @@ export interface World {
     b: number;
   };
 }
+
+export interface PlaneMeshExtraInfo {
+  originalPosition: ArrayLike<number>;
+  randomValues: Array<number>;
+}

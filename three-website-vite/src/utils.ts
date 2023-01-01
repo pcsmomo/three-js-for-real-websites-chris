@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 // Types
-import { PlaneMesh, World } from './types';
+import { PlaneMesh, World, PlaneMeshExtraInfo } from './types';
 
 // Constants
 import { BASE_RGB } from './constants';
@@ -52,7 +52,24 @@ export function setPlaneAttributes(plane: PlaneMesh) {
   plane.geometry.setAttribute('color', colors);
 }
 
-export function generatePlane(plane: PlaneMesh, world: World) {
+export function getPlaneExtraInfo(plane: PlaneMesh) {
+  const planePosArr = plane.geometry.attributes.position.array;
+
+  const extInfo = {
+    originalPosition: planePosArr,
+    randomValues: new Array(planePosArr.length)
+      .fill(0)
+      .map(() => Math.random() - 0.5),
+  };
+
+  return extInfo;
+}
+
+export function generatePlane(
+  plane: PlaneMesh,
+  world: World,
+  extraInfo: PlaneMeshExtraInfo
+) {
   plane.geometry.dispose();
   plane.geometry = new THREE.PlaneGeometry(
     world.plane.width,
@@ -62,6 +79,11 @@ export function generatePlane(plane: PlaneMesh, world: World) {
   );
 
   setPlaneAttributes(plane);
+
+  // set extra info
+  const { originalPosition, randomValues } = getPlaneExtraInfo(plane);
+  extraInfo.originalPosition = originalPosition;
+  extraInfo.randomValues = randomValues;
 }
 
 export const setPlaneColor = (
