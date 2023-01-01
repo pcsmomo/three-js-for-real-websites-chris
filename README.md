@@ -28,4 +28,10 @@ npm install dat.gui
 
 Three js Raycaster coordinates normalized positions from [-1, 1] to [1, -1] and the center is [0, 0]
 
+### 11. Color Fade Hover Effect
+
+```sh
+npm install gsap
+```
+
 </details>

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import dat from 'dat.gui';
+import gsap from 'gsap';
 
 // Constants
 const PLN_W = 5;
@@ -9,7 +10,7 @@ const PLN_SEG_W = 10;
 const PLN_SEG_H = 10;
 
 const BASE_RGB = [0, 0.19, 0.4];
-const HOVERED_RGB = [0.1, 0.5, 1.0];
+const HOVERED_RGB = [0.1, 0.5, 1.0] as const;
 
 // GUI controls
 const gui = new dat.GUI();
@@ -162,6 +163,73 @@ function animate() {
       color.setXYZ(intersects[0].face.b, ...hoveredColor); // vertex 2
       color.setXYZ(intersects[0].face.c, ...hoveredColor); // vertex 3
       color.needsUpdate = true;
+
+      // back to original color
+      const hoveredColorObj = {
+        r: world.plane.r,
+        g: world.plane.g,
+        b: world.plane.b,
+      };
+      gsap.to(hoveredColorObj, {
+        r: BASE_RGB[0],
+        g: BASE_RGB[1],
+        b: BASE_RGB[2],
+        duration: 1,
+        onUpdate: () => {
+          // in this callback function, we only can use the object defined with `gasp.to`
+          // such as hoveredColorObj
+          console.log('update');
+
+          type FaceArrayType = 'a' | 'b' | 'c';
+          const faceArray: FaceArrayType[] = ['a', 'b', 'c'];
+          faceArray.forEach((c: FaceArrayType) => {
+            if (!intersects[0].face) return;
+            color.setXYZ(
+              intersects[0].face[c],
+              hoveredColorObj.r,
+              hoveredColorObj.g,
+              hoveredColorObj.b
+            );
+          });
+
+          // if (!intersects[0].face) return;
+          // color.setXYZ(
+          //   intersects[0].face.a,
+          //   hoveredColorObj.r,
+          //   hoveredColorObj.g,
+          //   hoveredColorObj.b
+          // ); // vertex 1
+          // color.setXYZ(
+          //   intersects[0].face.b,
+          //   hoveredColorObj.r,
+          //   hoveredColorObj.g,
+          //   hoveredColorObj.b
+          // ); // vertex 2
+          // color.setXYZ(
+          //   intersects[0].face.c,
+          //   hoveredColorObj.r,
+          //   hoveredColorObj.g,
+          //   hoveredColorObj.b
+          // ); // vertex 3
+
+          // // vertex 1
+          // color.setX(intersects[0].face.a, hoveredColorObj.r);
+          // color.setY(intersects[0].face.a, hoveredColorObj.g);
+          // color.setZ(intersects[0].face.a, hoveredColorObj.b);
+
+          // // vertex 2
+          // color.setX(intersects[0].face.b, hoveredColorObj.r);
+          // color.setY(intersects[0].face.b, hoveredColorObj.g);
+          // color.setZ(intersects[0].face.b, hoveredColorObj.b);
+
+          // // vertex 3
+          // color.setX(intersects[0].face.c, hoveredColorObj.r);
+          // color.setY(intersects[0].face.c, hoveredColorObj.g);
+          // color.setZ(intersects[0].face.c, hoveredColorObj.b);
+
+          color.needsUpdate = true;
+        },
+      });
     }
   }
 }
