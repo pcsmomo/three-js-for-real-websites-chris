@@ -100,6 +100,7 @@ const mouse = {
 };
 
 let frame = 0;
+const ANIM_SPEED_FACTOR = 0.8;
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
@@ -114,11 +115,11 @@ function animate() {
     // x
     array[i] =
       planeExtraInfo.originalPosition[i] +
-      Math.cos(frame + planeExtraInfo.randomValues[i]) * 0.3;
+      Math.cos(frame + planeExtraInfo.randomValues[i]) * ANIM_SPEED_FACTOR;
     // y
     array[i + 1] =
       planeExtraInfo.originalPosition[i + 1] +
-      Math.sin(frame + planeExtraInfo.randomValues[i + 1]) * 0.3;
+      Math.sin(frame + planeExtraInfo.randomValues[i + 1]) * ANIM_SPEED_FACTOR;
 
     // if (i === 0) {
     //   console.log(array[i], array[i + 1]);

@@ -19,7 +19,7 @@ function getRandomizedPosition(arrayToCopy: Array<number>) {
 
     array[i] = x + (Math.random() - 0.5) * 3;
     array[i + 1] = y + (Math.random() - 0.5) * 3;
-    array[i + 2] = z + (Math.random() - 0.5) * 5;
+    array[i + 2] = z + (Math.random() - 0.5) * 10;
     // console.log(j++, [x, y, array[i + 2]]);
   }
   return new THREE.BufferAttribute(array, 3);
@@ -59,7 +59,7 @@ export function getPlaneExtraInfo(plane: PlaneMesh) {
     originalPosition: planePosArr,
     randomValues: new Array(planePosArr.length)
       .fill(0)
-      .map(() => Math.random() - 0.5),
+      .map(() => Math.random() * Math.PI * 2),
   };
 
   return extInfo;
