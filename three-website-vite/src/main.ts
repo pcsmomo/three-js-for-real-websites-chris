@@ -8,6 +8,8 @@ const PLN_H = 5;
 const PLN_SEG_W = 10;
 const PLN_SEG_H = 10;
 
+const BASE_RGB = [0, 0.19, 0.4];
+
 // GUI controls
 const gui = new dat.GUI();
 const world = {
@@ -100,7 +102,7 @@ plane.geometry.setAttribute(
 
 const colors = [];
 for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
-  colors.push(1, 0, 0); // RGB
+  colors.push(...BASE_RGB); // RGB
 }
 // Colorful base colors
 // for (let i = 0; i < plane.geometry.attributes.position.count / 3; i++) {
@@ -144,9 +146,10 @@ function animate() {
     const { color } = obj.geometry.attributes;
     if (intersects[0].face) {
       // XYZ = RGB
-      color.setXYZ(intersects[0].face.a, 0, 0, 1); // vertex 1
-      color.setXYZ(intersects[0].face.b, 0, 0, 1); // vertex 2
-      color.setXYZ(intersects[0].face.c, 0, 0, 1); // vertex 3
+      const hoveredColor = [0.1, 0.5, 1] as const; // cobalt-blueish
+      color.setXYZ(intersects[0].face.a, ...hoveredColor); // vertex 1
+      color.setXYZ(intersects[0].face.b, ...hoveredColor); // vertex 2
+      color.setXYZ(intersects[0].face.c, ...hoveredColor); // vertex 3
       color.needsUpdate = true;
     }
   }
