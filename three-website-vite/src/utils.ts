@@ -13,14 +13,16 @@ function getRandomizedPosition(arrayToCopy: Array<number>) {
   const array = Float32Array.from(arrayToCopy);
   // let j = 1;
   for (let i = 0; i < array.length; i += 3) {
-    // const x = array[i];
-    // const y = array[i + 1];
+    const x = array[i];
+    const y = array[i + 1];
     const z = array[i + 2];
 
-    array[i + 2] = z + Math.random();
+    array[i] = x + (Math.random() - 0.5);
+    array[i + 1] = y + (Math.random() - 0.5);
+    array[i + 2] = z + (Math.random() - 0.5);
     // console.log(j++, [x, y, array[i + 2]]);
   }
-  return new THREE.BufferAttribute(array, 3, false);
+  return new THREE.BufferAttribute(array, 3);
 }
 
 function getInitialColors(plane: PlaneMesh) {

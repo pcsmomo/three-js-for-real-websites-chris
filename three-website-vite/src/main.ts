@@ -82,6 +82,13 @@ scene.add(plane);
 
 setPlaneAttributes(plane);
 
+// set extrs variables for position effect
+const planePosArr = plane.geometry.attributes.position.array;
+const planeOriginalPisition = planePosArr;
+const randomValues = new Array(planePosArr.length)
+  .fill(0)
+  .map(() => Math.random() - 0.5);
+
 // Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 0, 1);
@@ -97,14 +104,35 @@ const mouse = {
   y: 10,
 };
 
+let frame = 0;
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
 
   renderer.render(scene, camera);
+  raycaster.setFromCamera(mouse, camera);
+
+  // Set position randomly moving
+  frame += 0.01;
+  const array = Float32Array.from(plane.geometry.attributes.position.array);
+  for (let i = 0; i < array.length; i += 3) {
+    // x
+    array[i] =
+      planeOriginalPisition[i] + Math.cos(frame + randomValues[i]) * 0.3;
+    // y
+    array[i + 1] =
+      planeOriginalPisition[i + 1] +
+      Math.sin(frame + randomValues[i + 1]) * 0.3;
+
+    // if (i === 0) {
+    //   console.log(array[i], array[i + 1]);
+    // }
+  }
+  const newPos = new THREE.BufferAttribute(array, 3);
+  plane.geometry.setAttribute('position', newPos);
+  plane.geometry.attributes.position.needsUpdate = true;
 
   // set colors when hovering
-  raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObject(plane);
   if (intersects.length > 0 && intersects[0].face) {
     const hoverColor = {
