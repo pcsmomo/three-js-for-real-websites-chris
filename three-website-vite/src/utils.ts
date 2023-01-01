@@ -3,7 +3,13 @@ import * as THREE from 'three';
 // Types
 import { PlaneMesh, World } from './types';
 
-export function getNewPosition(arrayToCopy: Array<number>) {
+// Constants
+import { BASE_RGB } from './constants';
+
+function getNewPosition(arrayToCopy: Array<number>) {
+  // Modify the position attribute of the geometry
+  // const { array } = plane.geometry.attributes.position;  // ArrayLike<number> is ready-only in TypeScript ts(2542)
+  // const array = Float32Array.from(plane.geometry.attributes.position.array); // it works
   const array = Float32Array.from(arrayToCopy);
   // let j = 1;
   for (let i = 0; i < array.length; i += 3) {
@@ -17,6 +23,33 @@ export function getNewPosition(arrayToCopy: Array<number>) {
   return new THREE.BufferAttribute(array, 3, false);
 }
 
+function getNewColors(plane: PlaneMesh) {
+  const colors = [];
+  for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
+    colors.push(...BASE_RGB); // RGB
+  }
+  // Colorful base colors
+  // for (let i = 0; i < plane.geometry.attributes.position.count / 3; i++) {
+  //   colors.push(0, 0, 1); // RGB -> blue
+  //   colors.push(0, 1, 0); // green
+  //   colors.push(1, 0, 0); // red
+  // }
+
+  return new THREE.BufferAttribute(new Float32Array(colors), 3);
+}
+
+export function setPlaneAttributes(plane: PlaneMesh) {
+  // position
+  const position = getNewPosition(
+    plane.geometry.attributes.position.array as Array<number>
+  );
+  plane.geometry.setAttribute('position', position);
+
+  // color
+  const colors = getNewColors(plane);
+  plane.geometry.setAttribute('color', colors);
+}
+
 export function generatePlane(plane: PlaneMesh, world: World) {
   plane.geometry.dispose();
   plane.geometry = new THREE.PlaneGeometry(
@@ -26,10 +59,7 @@ export function generatePlane(plane: PlaneMesh, world: World) {
     world.plane.heightSegments
   );
 
-  plane.geometry.setAttribute(
-    'position',
-    getNewPosition(plane.geometry.attributes.position.array as Array<number>)
-  );
+  setPlaneAttributes(plane);
 }
 
 export const setPlaneColor = (

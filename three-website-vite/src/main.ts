@@ -7,26 +7,19 @@ import gsap from 'gsap';
 import { World } from './types';
 
 // Utils
-import { getNewPosition, generatePlane, setPlaneColor } from './utils';
+import { setPlaneAttributes, generatePlane, setPlaneColor } from './utils';
 
 // Constants
-import {
-  PLN_W,
-  PLN_H,
-  PLN_SEG_W,
-  PLN_SEG_H,
-  BASE_RGB,
-  HOVER_RGB,
-} from './constants';
+import { BASE_RGB, HOVER_RGB } from './constants';
 
 // GUI controls
 const gui = new dat.GUI();
 const world: World = {
   plane: {
-    width: PLN_W,
-    height: PLN_H,
-    widthSegments: PLN_SEG_W,
-    heightSegments: PLN_SEG_H,
+    width: 14,
+    height: 14,
+    widthSegments: 19,
+    heightSegments: 19,
     r: HOVER_RGB[0],
     g: HOVER_RGB[1],
     b: HOVER_RGB[2],
@@ -34,10 +27,10 @@ const world: World = {
 };
 
 gui
-  .add(world.plane, 'width', 1, 20)
+  .add(world.plane, 'width', 1, 50)
   .onChange(() => generatePlane(plane, world));
 gui
-  .add(world.plane, 'height', 1, 20)
+  .add(world.plane, 'height', 1, 50)
   .onChange(() => generatePlane(plane, world));
 gui
   .add(world.plane, 'widthSegments', 1, 50)
@@ -73,10 +66,10 @@ camera.position.z = 5;
 
 // Plane
 const planeGeometry = new THREE.PlaneGeometry(
-  PLN_W,
-  PLN_H,
-  PLN_SEG_W,
-  PLN_SEG_H
+  world.plane.width,
+  world.plane.height,
+  world.plane.widthSegments,
+  world.plane.heightSegments
 );
 const planeMaterial = new THREE.MeshPhongMaterial({
   // color: 0xff0000, // this default color will affect plan 'color' attribute (=vertex color?)
@@ -87,29 +80,7 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
-// Modify the position attribute of the geometry
-// const { array } = plane.geometry.attributes.position;  // ArrayLike<number> is ready-only in TypeScript ts(2542)
-// const array = Float32Array.from(plane.geometry.attributes.position.array); // it works
-plane.geometry.setAttribute(
-  'position',
-  getNewPosition(plane.geometry.attributes.position.array as Array<number>)
-);
-
-const colors = [];
-for (let i = 0; i < plane.geometry.attributes.position.count; i++) {
-  colors.push(...BASE_RGB); // RGB
-}
-// Colorful base colors
-// for (let i = 0; i < plane.geometry.attributes.position.count / 3; i++) {
-//   colors.push(0, 0, 1); // RGB -> blue
-//   colors.push(0, 1, 0); // green
-//   colors.push(1, 0, 0); // red
-// }
-
-plane.geometry.setAttribute(
-  'color',
-  new THREE.BufferAttribute(new Float32Array(colors), 3)
-);
+setPlaneAttributes(plane);
 
 // Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
