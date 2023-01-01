@@ -9,6 +9,7 @@ const PLN_SEG_W = 10;
 const PLN_SEG_H = 10;
 
 const BASE_RGB = [0, 0.19, 0.4];
+const HOVERED_RGB = [0.1, 0.5, 1.0];
 
 // GUI controls
 const gui = new dat.GUI();
@@ -18,6 +19,9 @@ const world = {
     height: PLN_H,
     widthSegments: PLN_SEG_W,
     heightSegments: PLN_SEG_H,
+    r: HOVERED_RGB[0],
+    g: HOVERED_RGB[1],
+    b: HOVERED_RGB[2],
   },
 };
 
@@ -25,6 +29,9 @@ gui.add(world.plane, 'width', 1, 20).onChange(generatePlane);
 gui.add(world.plane, 'height', 1, 20).onChange(generatePlane);
 gui.add(world.plane, 'widthSegments', 1, 50).onChange(generatePlane);
 gui.add(world.plane, 'heightSegments', 1, 50).onChange(generatePlane);
+gui.add(world.plane, 'r', 0, 1);
+gui.add(world.plane, 'g', 0, 1);
+gui.add(world.plane, 'b', 0, 1);
 
 function getNewPosition(arrayToCopy: Array<number>) {
   const array = Float32Array.from(arrayToCopy);
@@ -146,7 +153,11 @@ function animate() {
     const { color } = obj.geometry.attributes;
     if (intersects[0].face) {
       // XYZ = RGB
-      const hoveredColor = [0.1, 0.5, 1] as const; // cobalt-blueish
+      const hoveredColor = [
+        world.plane.r,
+        world.plane.g,
+        world.plane.b,
+      ] as const; // cobalt-blueish
       color.setXYZ(intersects[0].face.a, ...hoveredColor); // vertex 1
       color.setXYZ(intersects[0].face.b, ...hoveredColor); // vertex 2
       color.setXYZ(intersects[0].face.c, ...hoveredColor); // vertex 3
