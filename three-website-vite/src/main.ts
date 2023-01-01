@@ -10,7 +10,7 @@ const PLN_SEG_W = 10;
 const PLN_SEG_H = 10;
 
 const BASE_RGB = [0, 0.19, 0.4];
-const HOVERED_RGB = [0.1, 0.5, 1.0] as const;
+const HOVER_RGB = [0.1, 0.5, 1.0] as const;
 
 // GUI controls
 const gui = new dat.GUI();
@@ -20,9 +20,9 @@ const world = {
     height: PLN_H,
     widthSegments: PLN_SEG_W,
     heightSegments: PLN_SEG_H,
-    r: HOVERED_RGB[0],
-    g: HOVERED_RGB[1],
-    b: HOVERED_RGB[2],
+    r: HOVER_RGB[0],
+    g: HOVER_RGB[1],
+    b: HOVER_RGB[2],
   },
 };
 
@@ -139,6 +139,31 @@ const mouse = {
   y: 10,
 };
 
+const setPlaneColor = (
+  intersect: THREE.Intersection<THREE.Object3D<THREE.Event>>,
+  hoverColor: { r: number; g: number; b: number }
+) => {
+  if (intersect.face) {
+    const obj = intersect.object as PlaneMesh;
+    const { color } = obj.geometry.attributes;
+    const hoveredColor = [hoverColor.r, hoverColor.g, hoverColor.b] as const; // cobalt-blueish
+    // XYZ = RGB
+    color.setXYZ(intersect.face.a, ...hoveredColor); // vertex 1
+    color.setXYZ(intersect.face.b, ...hoveredColor); // vertex 2
+    color.setXYZ(intersect.face.c, ...hoveredColor); // vertex 3
+
+    // a way to use defined Array
+    // type FaceArrayType = 'a' | 'b' | 'c';
+    // const faceArray: FaceArrayType[] = ['a', 'b', 'c'];
+    // faceArray.forEach((c: FaceArrayType) => {
+    //   if (!intersect.face) return;
+    //   color.setXYZ(intersect.face[c], hoverColor.r, hoverColor.g, hoverColor.b);
+    // });
+
+    color.needsUpdate = true;
+  }
+};
+
 type PlaneMesh = THREE.Mesh<THREE.PlaneGeometry, THREE.MeshPhongMaterial>;
 function animate() {
   requestAnimationFrame(animate);
@@ -146,91 +171,31 @@ function animate() {
 
   renderer.render(scene, camera);
 
+  // set colors when hovering
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObject(plane);
-  if (intersects.length > 0) {
-    // intersects[0].object.geometry.attributes.color   // ts(2339) warning
-    const obj = intersects[0].object as PlaneMesh;
-    const { color } = obj.geometry.attributes;
-    if (intersects[0].face) {
-      // XYZ = RGB
-      const hoveredColor = [
-        world.plane.r,
-        world.plane.g,
-        world.plane.b,
-      ] as const; // cobalt-blueish
-      color.setXYZ(intersects[0].face.a, ...hoveredColor); // vertex 1
-      color.setXYZ(intersects[0].face.b, ...hoveredColor); // vertex 2
-      color.setXYZ(intersects[0].face.c, ...hoveredColor); // vertex 3
-      color.needsUpdate = true;
+  if (intersects.length > 0 && intersects[0].face) {
+    const hoverColor = {
+      r: world.plane.r,
+      g: world.plane.g,
+      b: world.plane.b,
+    };
 
-      // back to original color
-      const hoveredColorObj = {
-        r: world.plane.r,
-        g: world.plane.g,
-        b: world.plane.b,
-      };
-      gsap.to(hoveredColorObj, {
-        r: BASE_RGB[0],
-        g: BASE_RGB[1],
-        b: BASE_RGB[2],
-        duration: 1,
-        onUpdate: () => {
-          // in this callback function, we only can use the object defined with `gasp.to`
-          // such as hoveredColorObj
-          console.log('update');
+    setPlaneColor(intersects[0], hoverColor);
 
-          type FaceArrayType = 'a' | 'b' | 'c';
-          const faceArray: FaceArrayType[] = ['a', 'b', 'c'];
-          faceArray.forEach((c: FaceArrayType) => {
-            if (!intersects[0].face) return;
-            color.setXYZ(
-              intersects[0].face[c],
-              hoveredColorObj.r,
-              hoveredColorObj.g,
-              hoveredColorObj.b
-            );
-          });
-
-          // if (!intersects[0].face) return;
-          // color.setXYZ(
-          //   intersects[0].face.a,
-          //   hoveredColorObj.r,
-          //   hoveredColorObj.g,
-          //   hoveredColorObj.b
-          // ); // vertex 1
-          // color.setXYZ(
-          //   intersects[0].face.b,
-          //   hoveredColorObj.r,
-          //   hoveredColorObj.g,
-          //   hoveredColorObj.b
-          // ); // vertex 2
-          // color.setXYZ(
-          //   intersects[0].face.c,
-          //   hoveredColorObj.r,
-          //   hoveredColorObj.g,
-          //   hoveredColorObj.b
-          // ); // vertex 3
-
-          // // vertex 1
-          // color.setX(intersects[0].face.a, hoveredColorObj.r);
-          // color.setY(intersects[0].face.a, hoveredColorObj.g);
-          // color.setZ(intersects[0].face.a, hoveredColorObj.b);
-
-          // // vertex 2
-          // color.setX(intersects[0].face.b, hoveredColorObj.r);
-          // color.setY(intersects[0].face.b, hoveredColorObj.g);
-          // color.setZ(intersects[0].face.b, hoveredColorObj.b);
-
-          // // vertex 3
-          // color.setX(intersects[0].face.c, hoveredColorObj.r);
-          // color.setY(intersects[0].face.c, hoveredColorObj.g);
-          // color.setZ(intersects[0].face.c, hoveredColorObj.b);
-
-          color.needsUpdate = true;
-        },
-      });
-    }
+    // animate the colors back to original
+    gsap.to(hoverColor, {
+      r: BASE_RGB[0],
+      g: BASE_RGB[1],
+      b: BASE_RGB[2],
+      duration: 1,
+      onUpdate: () => {
+        // in this callback function, we only can use the object defined with `gasp.to`
+        // such as hoveredColorObj
+        // console.log('update');
+        setPlaneColor(intersects[0], hoverColor);
+      },
+    });
   }
 }
 
