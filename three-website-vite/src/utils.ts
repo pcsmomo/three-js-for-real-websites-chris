@@ -17,9 +17,9 @@ function getRandomizedPosition(arrayToCopy: Array<number>) {
     const y = array[i + 1];
     const z = array[i + 2];
 
-    array[i] = x + (Math.random() - 0.5);
-    array[i + 1] = y + (Math.random() - 0.5);
-    array[i + 2] = z + (Math.random() - 0.5);
+    array[i] = x + (Math.random() - 0.5) * 3;
+    array[i + 1] = y + (Math.random() - 0.5) * 3;
+    array[i + 2] = z + (Math.random() - 0.5) * 5;
     // console.log(j++, [x, y, array[i + 2]]);
   }
   return new THREE.BufferAttribute(array, 3);

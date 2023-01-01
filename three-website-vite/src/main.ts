@@ -16,10 +16,10 @@ import { BASE_RGB, HOVER_RGB } from './constants';
 const gui = new dat.GUI();
 const world: World = {
   plane: {
-    width: 14,
-    height: 14,
-    widthSegments: 19,
-    heightSegments: 19,
+    width: 400,
+    height: 400,
+    widthSegments: 50,
+    heightSegments: 50,
     r: HOVER_RGB[0],
     g: HOVER_RGB[1],
     b: HOVER_RGB[2],
@@ -27,16 +27,16 @@ const world: World = {
 };
 
 gui
-  .add(world.plane, 'width', 1, 50)
+  .add(world.plane, 'width', 1, 500)
   .onChange(() => generatePlane(plane, world));
 gui
-  .add(world.plane, 'height', 1, 50)
+  .add(world.plane, 'height', 1, 500)
   .onChange(() => generatePlane(plane, world));
 gui
-  .add(world.plane, 'widthSegments', 1, 50)
+  .add(world.plane, 'widthSegments', 1, 100)
   .onChange(() => generatePlane(plane, world));
 gui
-  .add(world.plane, 'heightSegments', 1, 50)
+  .add(world.plane, 'heightSegments', 1, 100)
   .onChange(() => generatePlane(plane, world));
 gui.add(world.plane, 'r', 0, 1);
 gui.add(world.plane, 'g', 0, 1);
@@ -62,7 +62,7 @@ document.body.appendChild(renderer.domElement);
 // Orbit controls
 new OrbitControls(camera, renderer.domElement);
 
-camera.position.z = 5;
+camera.position.z = 50;
 
 // Plane
 const planeGeometry = new THREE.PlaneGeometry(
@@ -79,8 +79,8 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
-
-setPlaneAttributes(plane);
+// setPlaneAttributes(plane);
+generatePlane(plane, world);
 
 // set extrs variables for position effect
 const planePosArr = plane.geometry.attributes.position.array;
@@ -91,7 +91,7 @@ const randomValues = new Array(planePosArr.length)
 
 // Lights
 const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(0, 0, 1);
+light.position.set(0, 1, 1);
 scene.add(light);
 
 const backLight = new THREE.DirectionalLight(0xffffff, 1);
