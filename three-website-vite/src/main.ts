@@ -3,18 +3,25 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import dat from 'dat.gui';
 import gsap from 'gsap';
 
-// Constants
-const PLN_W = 5;
-const PLN_H = 5;
-const PLN_SEG_W = 10;
-const PLN_SEG_H = 10;
+// Types
+import { World } from './types';
 
-const BASE_RGB = [0, 0.19, 0.4];
-const HOVER_RGB = [0.1, 0.5, 1.0] as const;
+// Utils
+import { getNewPosition, generatePlane, setPlaneColor } from './utils';
+
+// Constants
+import {
+  PLN_W,
+  PLN_H,
+  PLN_SEG_W,
+  PLN_SEG_H,
+  BASE_RGB,
+  HOVER_RGB,
+} from './constants';
 
 // GUI controls
 const gui = new dat.GUI();
-const world = {
+const world: World = {
   plane: {
     width: PLN_W,
     height: PLN_H,
@@ -26,43 +33,23 @@ const world = {
   },
 };
 
-gui.add(world.plane, 'width', 1, 20).onChange(generatePlane);
-gui.add(world.plane, 'height', 1, 20).onChange(generatePlane);
-gui.add(world.plane, 'widthSegments', 1, 50).onChange(generatePlane);
-gui.add(world.plane, 'heightSegments', 1, 50).onChange(generatePlane);
+gui
+  .add(world.plane, 'width', 1, 20)
+  .onChange(() => generatePlane(plane, world));
+gui
+  .add(world.plane, 'height', 1, 20)
+  .onChange(() => generatePlane(plane, world));
+gui
+  .add(world.plane, 'widthSegments', 1, 50)
+  .onChange(() => generatePlane(plane, world));
+gui
+  .add(world.plane, 'heightSegments', 1, 50)
+  .onChange(() => generatePlane(plane, world));
 gui.add(world.plane, 'r', 0, 1);
 gui.add(world.plane, 'g', 0, 1);
 gui.add(world.plane, 'b', 0, 1);
 
-function getNewPosition(arrayToCopy: Array<number>) {
-  const array = Float32Array.from(arrayToCopy);
-  // let j = 1;
-  for (let i = 0; i < array.length; i += 3) {
-    // const x = array[i];
-    // const y = array[i + 1];
-    const z = array[i + 2];
-
-    array[i + 2] = z + Math.random();
-    // console.log(j++, [x, y, array[i + 2]]);
-  }
-  return new THREE.BufferAttribute(array, 3, false);
-}
-
-function generatePlane() {
-  plane.geometry.dispose();
-  plane.geometry = new THREE.PlaneGeometry(
-    world.plane.width,
-    world.plane.height,
-    world.plane.widthSegments,
-    world.plane.heightSegments
-  );
-
-  plane.geometry.setAttribute(
-    'position',
-    getNewPosition(plane.geometry.attributes.position.array as Array<number>)
-  );
-}
-
+// THREE main objects
 const raycaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -139,32 +126,6 @@ const mouse = {
   y: 10,
 };
 
-const setPlaneColor = (
-  intersect: THREE.Intersection<THREE.Object3D<THREE.Event>>,
-  hoverColor: { r: number; g: number; b: number }
-) => {
-  if (intersect.face) {
-    const obj = intersect.object as PlaneMesh;
-    const { color } = obj.geometry.attributes;
-    const hoveredColor = [hoverColor.r, hoverColor.g, hoverColor.b] as const; // cobalt-blueish
-    // XYZ = RGB
-    color.setXYZ(intersect.face.a, ...hoveredColor); // vertex 1
-    color.setXYZ(intersect.face.b, ...hoveredColor); // vertex 2
-    color.setXYZ(intersect.face.c, ...hoveredColor); // vertex 3
-
-    // a way to use defined Array
-    // type FaceArrayType = 'a' | 'b' | 'c';
-    // const faceArray: FaceArrayType[] = ['a', 'b', 'c'];
-    // faceArray.forEach((c: FaceArrayType) => {
-    //   if (!intersect.face) return;
-    //   color.setXYZ(intersect.face[c], hoverColor.r, hoverColor.g, hoverColor.b);
-    // });
-
-    color.needsUpdate = true;
-  }
-};
-
-type PlaneMesh = THREE.Mesh<THREE.PlaneGeometry, THREE.MeshPhongMaterial>;
 function animate() {
   requestAnimationFrame(animate);
   // plane.rotation.x += 0.01;
@@ -180,7 +141,6 @@ function animate() {
       g: world.plane.g,
       b: world.plane.b,
     };
-
     setPlaneColor(intersects[0], hoverColor);
 
     // animate the colors back to original
