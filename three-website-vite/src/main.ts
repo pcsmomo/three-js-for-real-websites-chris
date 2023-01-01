@@ -33,10 +33,10 @@ gui
   .add(world.plane, 'height', 1, 500)
   .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui
-  .add(world.plane, 'widthSegments', 1, 100)
+  .add(world.plane, 'widthSegments', 1, 75)
   .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui
-  .add(world.plane, 'heightSegments', 1, 100)
+  .add(world.plane, 'heightSegments', 1, 75)
   .onChange(() => generatePlane(plane, world, planeExtraInfo));
 gui.add(world.plane, 'r', 0, 1);
 gui.add(world.plane, 'g', 0, 1);
@@ -62,7 +62,7 @@ document.body.appendChild(renderer.domElement);
 // Orbit controls
 new OrbitControls(camera, renderer.domElement);
 
-camera.position.z = 50;
+camera.position.z = 80;
 
 // Plane
 const planeGeometry = new THREE.PlaneGeometry(
