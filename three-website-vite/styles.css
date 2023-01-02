@@ -1,3 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,500&family=Space+Mono&display=swap');
+
 body {
   margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.text-white {
+  color: white;
+}
+
+.main-container {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: default;
+}
+
+.font-exo {
+  font-family: 'Exo 2', sans-serif;
+}
+
+.space-space-mono {
+  font-family: 'Space Mono', monospace;
 }
